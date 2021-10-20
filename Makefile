@@ -12,9 +12,8 @@ setup:
 
 install:
 	# This should be run from inside a virtualenv
-	cd techtrends
 	pip install --upgrade pip &&\
-		pip install -r requirements.txt
+		pip install -r ./techtrends/requirements.txt
 
 lint:
 	# See local hadolint install instructions:   https://github.com/hadolint/hadolint
