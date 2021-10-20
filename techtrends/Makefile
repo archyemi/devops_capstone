@@ -12,6 +12,7 @@ setup:
 
 install:
 	# This should be run from inside a virtualenv
+	cd techtrends
 	pip install --upgrade pip &&\
 		pip install -r requirements.txt
 
