@@ -26,7 +26,7 @@ parameters:
     default: python:3.7.3-stretch
 
 jobs:
-  test-application:
+  lint-application:
     docker:
       - image: << pipeline.parameters.stretch_image >>
    
@@ -147,9 +147,9 @@ jobs:
 workflows:
   default:
     jobs:
-      - test-application
+      - lint-application
       #- deploy-infrastructure:
-      #    requires: [test-application]
+      #    requires: [lint-application]
       #    filters:
       #      branches:
       #        only: [main]
