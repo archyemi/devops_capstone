@@ -26,7 +26,7 @@ parameters:
     default: python:3.7.3-stretch
 
 jobs:
-  test_application:
+  test-application:
     docker:
       - image: << pipeline.parameters.stretch_image >>
     
