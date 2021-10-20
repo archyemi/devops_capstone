@@ -1,7 +1,7 @@
 import sqlite3
 import logging
 
-from flask import Flask, jsonify, json, render_template, request, url_for, redirect, flash
+from flask import Flask, json, render_template, request, url_for, redirect, flash
 from werkzeug.exceptions import abort
 import sys
 import os
@@ -45,10 +45,10 @@ def get_db_connection():
 # Function to get a post using its ID
 def get_post(post_id):
     connection = get_db_connection()
-    post = connection.execute('SELECT * FROM posts WHERE id = ?',
+    getpost = connection.execute('SELECT * FROM posts WHERE id = ?',
                         (post_id,)).fetchone()
     connection.close()
-    return post
+    return getpost
 
 # Define the Flask application
 app = Flask(__name__)
@@ -66,13 +66,13 @@ def index():
 # If the post ID is not found a 404 page is shown
 @app.route('/<int:post_id>')
 def post(post_id):
-    post = get_post(post_id)
-    if post is None:
-      app.logger.error('Trying to access a non-existing article')
-      return render_template('404.html'), 404
+    getpost = get_post(post_id)
+    if getpost is None:
+        app.logger.error('Trying to access a non-existing article')
+        return render_template('404.html'), 404
     else:
-      app.logger.info('%s article is retrieved', post)
-      return render_template('post.html', post=post)
+        app.logger.info('%s article is retrieved', getpost)
+        return render_template('post.html', post=getpost)
       
 
 # Define the About Us page
