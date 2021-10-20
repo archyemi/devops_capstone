@@ -48,7 +48,7 @@ jobs:
           command: |
             . venv/bin/activate
             hadolint Dockerfile
-            pylint --disable=R,C,W1203,W1309 app.py
+            pylint --disable=R,C,W1203,W1309 ./techtrends/app.py
 
   deploy-infrastructure:
     docker: 
