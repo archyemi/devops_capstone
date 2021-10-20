@@ -1,0 +1,38 @@
+---
+- name: Disable IPv6 with sysctl
+  become: true
+  sysctl: name={{ item }} value=1 state=present reload=yes
+  with_items:
+    - net.ipv6.conf.all.disable_ipv6
+    - net.ipv6.conf.default.disable_ipv6
+    - net.ipv6.conf.lo.disable_ipv6
+
+- name: Creates kubernetes directory
+  file:
+    path: ~/kubernetes
+    state: directory
+
+- name: Creates techtrends directory
+  file:
+    path: ~/techtrends
+    state: directory
+
+- name: Unarchive Kubernetes
+  unarchive:
+    src: kubernetes.tar.gz
+    dest: /home/ubuntu/kubernetes/
+
+- name: Unarchive techtrends application
+  unarchive:
+    src: techtrends.tar.gz
+    dest: /home/ubuntu/techtrends/
+
+- name: "copy backend files"
+  become: true
+  copy:
+    src: /root/project/Dockerfile
+    dest: /home/ubuntu
+
+- name: list content
+  shell: |
+    ll

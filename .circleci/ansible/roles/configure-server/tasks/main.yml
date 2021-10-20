@@ -1,0 +1,32 @@
+---
+- name: "upgrade packages."
+  become: true
+  apt:
+    upgrade: "yes"
+
+- name: "Remove dependencies that are no longer required."
+  become: true
+  apt:
+    autoremove: yes
+
+- name: Install utilities
+  shell: |
+    cd /home/ubuntu/
+    apt-get update
+    apt-get install -y bash-completion binutils
+    echo 'colorscheme ron' >> ~/.vimrc
+    echo 'set tabstop=2' >> ~/.vimrc
+    echo 'set shiftwidth=2' >> ~/.vimrc
+    echo 'set expandtab' >> ~/.vimrc
+    echo 'source <(kubectl completion bash)' >> ~/.bashrc
+    echo 'alias k=kubectl' >> ~/.bashrc
+    echo 'alias c=clear' >> ~/.bashrc
+    echo 'complete -F __start_kubectl k' >> ~/.bashrc
+    sed -i '1s/^/force_color_prompt=yes\n/' ~/.bashrc
+
+- name: Install k3s
+  shell: |
+    cd /home/ubuntu/
+    apt-get install -y docker.io
+    curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+    sudo chmod 644 /etc/rancher/k3s/k3s.yaml
