@@ -37,6 +37,7 @@ jobs:
           name: install dependencies
           command: |
             make setup
+            . venv/bin/activate
             make install
     
       # run lints!
