@@ -12,23 +12,12 @@
     path: ~/kubernetes
     state: directory
 
-- name: Creates techtrends directory
-  file:
-    path: ~/techtrends
-    state: directory
-
 - name: Unarchive Kubernetes
   unarchive:
     src: kubernetes.tar.gz
     dest: /home/ubuntu/kubernetes/
 
-- name: Install k3s
-  shell: |
-    cd /home/ubuntu/
-    curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
-    sudo chmod 644 /etc/rancher/k3s/k3s.yaml
-
-- name: Deployments and Services
+- name: Deployments
   shell: |
     cd /home/ubuntu/kubernetes/kubernetes/
     kubectl get nodes
