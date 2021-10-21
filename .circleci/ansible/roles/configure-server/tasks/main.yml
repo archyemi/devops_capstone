@@ -24,8 +24,3 @@
     echo 'complete -F __start_kubectl k' >> ~/.bashrc
     sed -i '1s/^/force_color_prompt=yes\n/' ~/.bashrc
 
-- name: Install k3s
-  shell: |
-    cd /home/ubuntu/
-    curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
-    sudo chmod 644 /etc/rancher/k3s/k3s.yaml

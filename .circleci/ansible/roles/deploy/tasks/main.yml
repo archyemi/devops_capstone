@@ -22,9 +22,15 @@
     src: kubernetes.tar.gz
     dest: /home/ubuntu/kubernetes/
 
-- name: list content
+- name: Install k3s
+  shell: |
+    cd /home/ubuntu/
+    curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+    sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+
+- name: Deployments and Services
   shell: |
     cd /home/ubuntu/kubernetes/kubernetes/
     kubectl get nodes
     kubectl apply -f .
-    
+    kubectl port-forward -n app  service/techtrends --address 0.0.0.0 3111:4111
