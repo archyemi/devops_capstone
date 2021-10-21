@@ -124,8 +124,8 @@ jobs:
           name: Install dependencies
           command: |
             pip install awscli
-            yum install -y ansible tar gzip
-            yum install -y zip unzip rsync openssh
+            apk add --update ansible tar gzip
+            apk add --update zip unzip rsync openssh
       - run:
           name: Configure
           command: |
