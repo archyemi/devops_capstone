@@ -23,7 +23,7 @@ parameters:
     default: amazon/aws-cli
   stretch_image:
     type: string
-    default: python:3.7-alpine3.11
+    default: python:3.7.3-stretch
 
 jobs:
   lint-application:
@@ -87,7 +87,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: << pipeline.parameters.stretch_image >>
+      - image: << pipeline.parameters.amazon_image >>
     steps:
       - checkout
       - add_ssh_keys:  # Add ssh keys with fingerprint
@@ -97,8 +97,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
-            pip install awscli 
+            yum install -y ansible
       - run:
           name: Configure server
           command: |
@@ -121,8 +120,8 @@ jobs:
           name: Install dependencies
           command: |
             pip install awscli
-            apk add --update ansible tar gzip
-            apk add --update zip unzip rsync openssh
+            yum install -y ansible tar gzip
+            yum install -y zip unzip rsync openssh
       - run:
           name: Configure
           command: |
