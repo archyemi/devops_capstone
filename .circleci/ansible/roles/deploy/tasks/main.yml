@@ -22,20 +22,9 @@
     src: kubernetes.tar.gz
     dest: /home/ubuntu/kubernetes/
 
-- name: Unarchive techtrends application
-  unarchive:
-    src: techtrends.tar.gz
-    dest: /home/ubuntu/techtrends/
-
-- name: "copy backend files"
-  become: true
-  copy:
-    src: /root/project/Dockerfile
-    dest: /home/ubuntu
-
 - name: list content
   shell: |
-    cd /home/ubuntu/kubernetes/
+    cd /home/ubuntu/kubernetes/kubernetes/
     kubectl get nodes
     kubectl apply -f .
     
