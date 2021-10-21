@@ -148,13 +148,13 @@ workflows:
   default:
     jobs:
       - lint-application
-      #- deploy-infrastructure:
-      #    requires: [lint-application]
-      #    filters:
-      #      branches:
-      #        only: [main]
-      #- configure-infrastructure:
-      #    requires: [deploy-infrastructure]
+      - deploy-infrastructure:
+          requires: [lint-application]
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       #- deploy-application:
       #    requires: [configure-infrastructure]
       #- smoke-test:
