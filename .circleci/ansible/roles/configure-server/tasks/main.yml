@@ -29,13 +29,3 @@
     cd /home/ubuntu/
     curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
     sudo chmod 644 /etc/rancher/k3s/k3s.yaml
-
-- name: Install docker
-  shell: |
-    cd /home/ubuntu/
-    sudo apt update
-    sudo apt install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo apt update
-    sudo apt install docker-ce docker-ce-cli containerd.io
-    sudo systemctl status docker
