@@ -67,7 +67,7 @@ jobs:
           command: |
             cd .circleci/ansible/
             rm ./inventory.txt
-            BACKEND_DNS=$(aws ec2 describe-instances --region ${AWS_DEFAULT_REGION} --filters 'Name=tag:project,Values=udapeople-backend' --query "Reservations[*].Instances[0].PublicDnsName" --output text)
+            BACKEND_DNS=$(aws ec2 describe-instances --region ${AWS_DEFAULT_REGION} --filters 'Name=tag:project,Values=devops-capstone' --query "Reservations[*].Instances[0].PublicDnsName" --output text)
             echo "[web]" >> ./inventory.txt
             echo ${BACKEND_DNS} >> ./inventory.txt
             cat ./inventory.txt
