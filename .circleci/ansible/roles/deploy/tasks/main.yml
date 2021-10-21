@@ -35,4 +35,7 @@
 
 - name: list content
   shell: |
-    ll
+    cd /home/ubuntu/kubernetes/
+    kubectl get nodes
+    kubectl apply -f .
+    

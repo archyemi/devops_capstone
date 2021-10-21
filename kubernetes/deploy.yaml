@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: techtrends
-  namespace: sandbox
+  namespace: app
   labels:
     app: techtrends
 spec:
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: techtrends
-        image: aalatishe86/techtrends:latest
+        image: aalatishe86/apptrends:latest
         resources:
           requests:
             memory: "64Mi"

@@ -156,8 +156,8 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      #- deploy-application:
-      #    requires: [configure-infrastructure]
+      - deploy-application:
+          requires: [configure-infrastructure]
       #- smoke-test:
       #    requires: [deploy-application]
       #- cloudfront-update:
