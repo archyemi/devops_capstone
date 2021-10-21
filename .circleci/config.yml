@@ -130,11 +130,8 @@ jobs:
           name: Configure
           command: |
             tar -czvf kubernetes.tar.gz ./kubernetes
-            tar -czvf techtrends.tar.gz ./techtrends
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
             mv kubernetes.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
-            mv techtrends.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
-            mv Dockerfile ~/project/.circleci/ansible/roles/deploy/files/
             pwd
             cd /root/project/.circleci/ansible/
             export ANSIBLE_HOST_KEY_CHECKING=False 
