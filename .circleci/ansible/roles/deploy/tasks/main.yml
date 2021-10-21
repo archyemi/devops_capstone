@@ -21,5 +21,7 @@
   shell: |
     cd /home/ubuntu/kubernetes/kubernetes/
     kubectl get nodes
-    kubectl apply -f .
-    kubectl port-forward -n app  service/techtrends --address 0.0.0.0 3111:4111
+    kubectl apply -f namespace.yaml
+    kubectl apply -f deploy.yaml
+    kubectl apply -f service.yaml
+ #  kubectl port-forward -n app  service/techtrends --address 0.0.0.0 3111:4111
