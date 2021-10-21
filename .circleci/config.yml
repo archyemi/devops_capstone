@@ -91,7 +91,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:  # Add ssh keys with fingerprint
-          fingerprints: ["ce:24:79:a5:05:46:f6:26:36:b5:61:e5:e9:11:25:4e"] 
+          fingerprints: ["8e:9d:fc:e1:fd:21:2a:0d:46:f7:92:07:fe:7d:34:3b"] 
       - attach_workspace:
           at: ~/
       - run:
@@ -110,7 +110,7 @@ jobs:
 
   deploy-application:
     docker:
-      - image: << pipeline.parameters.stretch_image >> # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11 # Docker image here that supports Ansible
     steps:
       - checkout
       - add_ssh_keys:  # Add ssh keys with fingerprint
