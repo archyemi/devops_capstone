@@ -12,7 +12,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow_id >>
+            aws cloudformation delete-stack --stack-name devops-capstone-<< parameters.workflow_id >>
 
 parameters:
   circleci_image:
@@ -23,7 +23,7 @@ parameters:
     default: amazon/aws-cli
   stretch_image:
     type: string
-    default: python:3.7.3-stretch
+    default: python:3.7-alpine3.11
 
 jobs:
   lint-application:
