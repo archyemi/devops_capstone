@@ -10,9 +10,11 @@
     autoremove: yes
 
 - name: Install utilities
+  become: true
   shell: |
     cd /home/ubuntu/
     apt-get update
+    apt-get install -y kubectl
     apt-get install -y bash-completion binutils
     echo 'colorscheme ron' >> ~/.vimrc
     echo 'set tabstop=2' >> ~/.vimrc
