@@ -10,12 +10,12 @@
     src: kubernetes.tar.gz
     dest: /home/ubuntu/kubernetes/
 
-- name: Deployments
-  become: true
-  shell: |
-    cd /home/ubuntu/kubernetes/kubernetes/
-    kubectl get nodes
-    kubectl apply -f namespace.yaml
-    kubectl apply -f deploy.yaml
-    kubectl apply -f service.yaml
+#- name: Deployments
+#  become: true
+#  shell: |
+#    cd /home/ubuntu/kubernetes/kubernetes/
+#    kubectl get nodes
+#    kubectl apply -f namespace.yaml
+#    kubectl apply -f deploy.yaml
+#    kubectl apply -f service.yaml
  #  kubectl port-forward -n app  service/techtrends --address 0.0.0.0 3111:4111
