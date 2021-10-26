@@ -68,9 +68,9 @@ jobs:
       - run:
           name: Create Cluster yaml
           command: |
-            cd .circleci/ansible/
+            cd .circleci/
             ls -al
-            eksctl create cluster -f cluster.yaml
+            eksctl create cluster -f cluster.yml
       
       - persist_to_workspace:
           root: ~/
