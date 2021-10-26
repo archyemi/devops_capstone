@@ -30,25 +30,27 @@
     echo 'alias c=clear' >> ~/.bashrc
     echo 'complete -F __start_kubectl k' >> ~/.bashrc
     sed -i '1s/^/force_color_prompt=yes\n/' ~/.bashrc
-
-- name: Install k3s
-  shell: |
-    cd /home/ubuntu/
+    clear
     cat << EOF > cluster.yaml
     ---
     apiVersion: eksctl.io/v1alpha5
     kind: ClusterConfig
-    
+
     metadata:
       name: capstone-cluster
       region: us-east-1
       version: "1.19"
 
-      managedNodeGroups:
-      - name: nodegroup
-        desiredCapacity: 1
-        ssh:
-          allow: true
-          publicKeyName: capstone
-      EOF
+    managedNodeGroups:
+    - name: nodegroup
+      desiredCapacity: 1
+      ssh:
+        allow: true
+        publicKeyName: capstone
+         
+    EOF
+
+- name: Install k3s
+  shell: |
+    cd /home/ubuntu/
     eksctl create cluster -f cluster.yaml

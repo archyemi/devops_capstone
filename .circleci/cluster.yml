@@ -1,0 +1,22 @@
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: capstone-cluster
+  region: us-east-1
+  version: "1.19"
+
+availabilityZones: ["${AWS_REGION}a", "${AWS_REGION}b", "${AWS_REGION}c"]
+
+managedNodeGroups:
+- name: nodegroup
+  desiredCapacity: 1
+  ssh:
+    allow: true
+    publicKeyName: capstone
+
+# To enable all of the control plane logs, uncomment below:
+# cloudWatch:
+#  clusterLogging:
+#    enableTypes: ["*"]
