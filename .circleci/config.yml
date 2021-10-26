@@ -73,7 +73,9 @@ jobs:
             eksctl create cluster -f cluster.yml
             cat /root/.kube/config
             kubectl get nodes
-            kubectl get pods -A
+            cd ..
+            kubectl apply -f kubernetes/.
+            kubectl get pods -A -o wide
       
       #- persist_to_workspace:
       #    root: ~/
