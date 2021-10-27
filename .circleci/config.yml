@@ -8,9 +8,8 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name devops-capstone
-#            aws cloudformation delete-stack --stack-name devops-capstone-<< parameters.workflow_id >>
-#            aws cloudformation delete-stack --stack-name devops-capstone-<< parameters.workflow_id >>
+            aws cloudformation delete-stack --stack-name eksctl-capstone-cluster2-cluster
+            aws cloudformation delete-stack --stack-name eksctl-capstone-cluster2-nodegroup-nodegroup
 
 parameters:
   circleci_image:
@@ -72,7 +71,9 @@ jobs:
             cat /root/.kube/config
             kubectl get nodes
             kubectl get pods -A -o wide
-            kubectl apply -f ~/kubernetes/.
+            cd ..
+            ls -al
+            kubectl apply -f kubernetes/.
             kubectl get pods -A -o wide
       
       #- persist_to_workspace:
