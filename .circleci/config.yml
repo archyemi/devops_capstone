@@ -74,7 +74,7 @@ jobs:
             cd ..
             ls -al
             kubectl apply -f kubernetes/.
-            kubectl get pods -A -o wide
+            kubectl get pods,deploy,svc -o wide --show-labels
       
       #- persist_to_workspace:
       #    root: ~/

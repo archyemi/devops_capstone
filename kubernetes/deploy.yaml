@@ -44,10 +44,11 @@ kind: Service
 metadata:
   name: techtrends
 spec:
+  type: NodePort 
   selector:
     app: techtrends
   ports:
     - protocol: TCP
       port: 4111
       targetPort: 3111
-  type: NodePort
+      nodePort: 30007
