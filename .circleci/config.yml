@@ -80,66 +80,62 @@ jobs:
           command: |
             cd .circleci/
             ls -al
+            rm ./kubeconfig
             eksctl create cluster -f cluster.yml
-            cat /root/.kube/config
+            config=$(cat /root/.kube/config)
+            echo ${config} >> ./kubeconfig
             kubectl get nodes
             kubectl get pods -A -o wide
 
-      - run:
-          name: Create Kubernetes Objects
-          command: |
-            cd kubernetes/
-            ls -al
-            cat /root/.kube/config
-            kubectl apply -f .
-            kubectl get pods,deploy,svc -o wide --show-labels
+      #- run:
+      #    name: Create Kubernetes Objects
+      #    command: |
+      #      cd kubernetes/
+      #      ls -al
+      #      cat /root/.kube/config
+      #      kubectl apply -f .
+      #      kubectl get pods,deploy,svc -o wide --show-labels
 
-      #- persist_to_workspace:
-      #    root: ~/
-      #    paths:
-      #      - project/.circleci/ansible/inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/kubeconfig
       # Here's where you will add some code to rollback on failure      
       - destroy-cluster
 
-  deploy-infrastructure:
+  deploy-app:
     docker: 
     - image: << pipeline.parameters.amazon_image >>
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/
       - run:
-          name: Deploy infrastructure exists
+          name: install dependencies
           command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
-              --tags project=devops-capstone \
-              --stack-name "devops-capstone-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+            yum install -y ansible tar gzip openssl
+            curl --silent --location -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+            chmod +x /usr/local/bin/kubectl
+            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            mv /tmp/eksctl /usr/local/bin
+            curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
       - run:
-          name: Add back-end ip to ansible inventory
+          name: Deploy Docker Application
           command: |
-            cd .circleci/ansible/
-            rm ./inventory.txt
-            BACKEND_DNS=$(aws ec2 describe-instances --region ${AWS_DEFAULT_REGION} --filters 'Name=tag:project,Values=devops-capstone' --query "Reservations[*].Instances[0].PublicDnsName" --output text)
-            echo "[web]" >> ./inventory.txt
-            echo ${BACKEND_DNS} >> ./inventory.txt
-            cat ./inventory.txt
-            yum install -y tar gzip
-            curl -H "Content-Type: text/plain" \
-               -H "token: ${CIRCLE_WORKFLOW_ID:0:7}" \
-               --request PUT \
-               --data ${BACKEND_DNS} \
-               https://api.memstash.io/values/backend_dns
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
+            cp .circleci/kubeconfig /root/.kube/config
+            cat /root/.kube/config
+            cd kubernetes/
+            ls -al
+            kubectl apply -f .
+            kubectl get pods,deploy,svc -o wide --show-labels  
+      
       # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-cluster
 
   deploy-application:
     docker:
-      - image: python:3.7-alpine3.11 # Docker image here that supports Ansible
+      - image: << pipeline.parameters.amazon_image >>
     steps:
       - checkout
       - add_ssh_keys:  # Add ssh keys with fingerprint
@@ -174,10 +170,10 @@ workflows:
       - lint-application
       - build-docker-image:
           requires: [lint-application]
-      #- deploy-cluster:
-      #    requires: [build-docker-image]
-      #- deploy-infrastructure:
-      #    requires: [lint-application]
+      - deploy-cluster:
+          requires: [build-docker-image]
+      - deploy-app:
+          requires: [deploy-cluster]
       #    filters:
       #      branches:
       #        only: [main]
