@@ -108,8 +108,6 @@ jobs:
     - image: << pipeline.parameters.amazon_image >>
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
       - run:
           name: install dependencies
           command: |
@@ -120,6 +118,10 @@ jobs:
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
             mv /tmp/eksctl /usr/local/bin
             curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+      
+      - attach_workspace:
+          at: ~/
+      
       - run:
           name: Deploy Docker Application
           command: |
