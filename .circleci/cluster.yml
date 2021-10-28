@@ -3,7 +3,7 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: capstone-cluster
+  name: capstone-cluster2
   region: eu-west-2
   version: "1.19"
 
