@@ -47,22 +47,16 @@ jobs:
             make lint
 
   build-docker-image:
-    docker:
-      - image: circleci/golang:1.15
-        auth:
-          username: aalatishe86
-          password: $DOCKERHUB_PASSWORD
+    machine: true
+     
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 19.03.13
-          docker_layer_caching: true
-
+     
       # build and push Docker image
       - run: |
           TAG=v1
           docker build -t aalatishe86/apptrends:$TAG .
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          echo $DOCKERHUB_PASSWORD | docker login -u $DOCKER_USER --password-stdin
           docker push aalatishe86/apptrends:$TAG
 
   deploy-cluster:
