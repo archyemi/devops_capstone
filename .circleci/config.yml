@@ -8,8 +8,9 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name eksctl-capstone-cluster2-cluster
-            aws cloudformation delete-stack --stack-name eksctl-capstone-cluster2-nodegroup-nodegroup
+            aws cloudformation delete-stack --stack-name eksctl-capstone-cluster-nodegroup-nodegroup --region eu-west-2
+            aws cloudformation delete-stack --stack-name eksctl-capstone-cluster-cluster --region eu-west-2
+            
 
 parameters:
   circleci_image:
@@ -125,10 +126,10 @@ jobs:
       - run:
           name: Deploy Docker Application
           command: |
-            cp .circleci/kubeconfig /root/.kube/config
-            cat /root/.kube/config
+            aws eks --region eu-west-2 update-kubeconfig --name capstone-cluster
             cd kubernetes/
             ls -al
+            kubectl get svc
             kubectl apply -f .
             kubectl get pods,deploy,svc -o wide --show-labels  
       
