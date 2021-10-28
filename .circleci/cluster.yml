@@ -3,7 +3,7 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: capstone-cluster2
+  name: capstone-cluster
   region: eu-west-2
   version: "1.19"
 
@@ -15,6 +15,6 @@ managedNodeGroups:
     publicKeyName: capstone
 
 # To enable all of the control plane logs, uncomment below:
-# cloudWatch:
-#  clusterLogging:
-#    enableTypes: ["*"]
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]

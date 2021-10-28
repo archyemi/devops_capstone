@@ -46,6 +46,25 @@ jobs:
             . venv/bin/activate
             make lint
 
+  build-docker-image:
+    docker:
+      - image: circleci/golang:1.15
+        auth:
+          username: aalatishe86
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+
+      # build and push Docker image
+      - run: |
+          TAG=v1
+          docker build -t aalatishe86/apptrends:$TAG .
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          docker push aalatishe86/apptrends:$TAG
+
   deploy-cluster:
     docker: 
     - image: << pipeline.parameters.amazon_image >>
@@ -63,7 +82,7 @@ jobs:
             curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
     
       - run:
-          name: Create Cluster yaml
+          name: Create EKS Cluster
           command: |
             cd .circleci/
             ls -al
@@ -71,11 +90,16 @@ jobs:
             cat /root/.kube/config
             kubectl get nodes
             kubectl get pods -A -o wide
-            cd ..
+
+      - run:
+          name: Create Kubernetes Objects
+          command: |
+            cd kubernetes/
             ls -al
-            kubectl apply -f kubernetes/.
+            cat /root/.kube/config
+            kubectl apply -f .
             kubectl get pods,deploy,svc -o wide --show-labels
-      
+
       #- persist_to_workspace:
       #    root: ~/
       #    paths:
@@ -119,32 +143,6 @@ jobs:
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-  configure-infrastructure:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:  # Add ssh keys with fingerprint
-          fingerprints: ["e4:a7:83:e4:09:f8:76:7d:29:09:86:3b:ba:4a:ac:39"] 
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible tar gzip
-            pip install awscli
-      - run:
-          name: Configure server
-          command: |
-            cd .circleci/ansible/
-            export ANSIBLE_HOST_KEY_CHECKING=False 
-            export host_key_checking=False
-            export record_host_keys=False
-            ansible-playbook -i ./inventory.txt configure-server.yml
-      # Here's where you will add some code to rollback on failure  
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
-
   deploy-application:
     docker:
       - image: python:3.7-alpine3.11 # Docker image here that supports Ansible
@@ -180,15 +178,15 @@ workflows:
   default:
     jobs:
       - lint-application
-      - deploy-cluster:
+      - build-docker-image:
           requires: [lint-application]
+      #- deploy-cluster:
+      #    requires: [build-docker-image]
       #- deploy-infrastructure:
       #    requires: [lint-application]
       #    filters:
       #      branches:
       #        only: [main]
-      #- configure-infrastructure:
-      #    requires: [deploy-infrastructure]
       #- deploy-application:
       #    requires: [configure-infrastructure]
       #- smoke-test:

@@ -39,4 +39,4 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64
           push: true
-          tags: aalatishe86/apptrends:latest
+          tags: aalatishe86/apptrends:gh
