@@ -104,7 +104,7 @@ jobs:
       # Here's where you will add some code to rollback on failure      
       - destroy-cluster
 
-  deploy-app:
+  deploy-app-v1:
     docker: 
     - image: << pipeline.parameters.amazon_image >>
     steps:
@@ -136,36 +136,31 @@ jobs:
       # Here's where you will add some code to rollback on failure      
       - destroy-cluster
 
-  deploy-application:
-    docker:
-      - image: << pipeline.parameters.amazon_image >>
+  deploy-update-v2:
+    docker: 
+    - image: << pipeline.parameters.amazon_image >>
     steps:
       - checkout
-      - add_ssh_keys:  # Add ssh keys with fingerprint
-          fingerprints: ["e4:a7:83:e4:09:f8:76:7d:29:09:86:3b:ba:4a:ac:39"] 
-      - attach_workspace:
-          at: ~/
       - run:
-          name: Install dependencies
+          name: install dependencies
           command: |
-            pip install awscli
-            apk add --update ansible tar gzip
-            apk add --update zip unzip rsync openssh
+            yum install -y ansible tar gzip openssl
+            curl --silent --location -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+            chmod +x /usr/local/bin/kubectl
+            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            mv /tmp/eksctl /usr/local/bin
+            curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+      
       - run:
-          name: Configure
+          name: Deploy Docker Application v2
           command: |
-            tar -czvf kubernetes.tar.gz ./kubernetes
-            mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
-            mv kubernetes.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
-            pwd
-            cd /root/project/.circleci/ansible/
-            export ANSIBLE_HOST_KEY_CHECKING=False 
-            export host_key_checking=False
-            export record_host_keys=False
-            ansible-playbook -i ./inventory.txt deploy-backend.yml     
-      # Here's where you will add some code to rollback on failure ## 
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}         
+            aws eks --region eu-west-2 update-kubeconfig --name capstone-cluster
+            cd kubernetes/
+            ls -al
+            kubectl set image deployment/techtrends aalatishe86/apptrends:v2
+            kubectl rollout status deployment/techtrends
+            kubectl get pods,rs,deploy,svc -o wide --show-labels      
 
 workflows:
   default:
@@ -175,13 +170,25 @@ workflows:
           requires: [lint-application]
       - deploy-cluster:
           requires: [build-docker-image]
+          filters:
+            tags:
+              only: /^b.*/
+            branches:
+              ignore: /.*/
       - deploy-app:
           requires: [deploy-cluster]
-      #    filters:
-      #      branches:
-      #        only: [main]
-      #- deploy-application:
-      #    requires: [configure-infrastructure]
+          filters:
+            tags:
+              only: /^b.*/
+            branches:
+              ignore: /.*/
+      - deploy-update-v2:
+          requires: [build-docker-image]
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       #- smoke-test:
       #    requires: [deploy-application]
       #- cloudfront-update:
