@@ -55,7 +55,7 @@ jobs:
      
       # build and push Docker image
       - run: |
-          TAG=v1
+          TAG=v2
           docker build -t aalatishe86/apptrends:$TAG .
           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKER_USER --password-stdin
           docker push aalatishe86/apptrends:$TAG
