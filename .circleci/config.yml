@@ -163,26 +163,20 @@ workflows:
       - deploy-cluster:
           requires: [build-docker-image]
           filters:
-            tags:
-              only: /^build.*/
             branches:
-              ignore: /.*/
+              only: main
       - deploy-app-v1:
           requires: [deploy-cluster]
           filters:
-            tags:
-              only: /^build.*/
             branches:
-              ignore: /.*/
+              only: main
       #- smoke-test:
       #    requires: [deploy-app-v1]
       - deploy-app-v2:
           requires: [build-docker-image]
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only: rolling-update
       #- cloudfront-update:
       #    requires: [smoke-test]
       #- cleanup:
