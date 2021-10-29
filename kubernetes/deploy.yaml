@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: techtrends
-        image: aalatishe86/apptrends:v1
+        image: aalatishe86/apptrends:v2
         resources:
           requests:
             memory: "64Mi"
@@ -51,4 +51,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3111
-#      nodePort: 30007

@@ -55,7 +55,7 @@ jobs:
      
       # build and push Docker image
       - run: |
-          TAG=v1
+          TAG=v2
           docker build -t aalatishe86/apptrends:$TAG .
           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKER_USER --password-stdin
           docker push aalatishe86/apptrends:$TAG
@@ -149,7 +149,7 @@ jobs:
             aws eks --region eu-west-2 update-kubeconfig --name devopscapstone
             cd kubernetes/
             ls -al
-            kubectl set image deployment.apps/techtrends techtrends=aalatishe86/apptrends:v1
+            kubectl set image deployment.apps/techtrends techtrends=aalatishe86/apptrends:v2
             kubectl rollout status deployment/techtrends
             kubectl get pods,rs,deploy,svc -o wide --show-labels      
 
