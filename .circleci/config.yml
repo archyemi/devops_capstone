@@ -173,15 +173,11 @@ workflows:
           filters:
             tags:
               only: /^b.*/
-            branches:
-              ignore: /.*/
       - deploy-app-v1:
           requires: [deploy-cluster]
           filters:
             tags:
               only: /^b.*/
-            branches:
-              ignore: /.*/
       - deploy-update-v2:
           requires: [build-docker-image]
           filters:
