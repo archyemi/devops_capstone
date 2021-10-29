@@ -8,8 +8,8 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name eksctl-capstone-cluster-nodegroup-nodegroup --region eu-west-2
-            aws cloudformation delete-stack --stack-name eksctl-capstone-cluster-cluster --region eu-west-2
+            aws cloudformation delete-stack --stack-name eksctl-devopscapstone-nodegroup-nodegroup --region eu-west-2
+            aws cloudformation delete-stack --stack-name eksctl-devopscapstone-cluster --region eu-west-2
             
 
 parameters:
@@ -88,15 +88,6 @@ jobs:
             kubectl get nodes
             kubectl get pods -A -o wide
 
-      #- run:
-      #    name: Create Kubernetes Objects
-      #    command: |
-      #      cd kubernetes/
-      #      ls -al
-      #      cat /root/.kube/config
-      #      kubectl apply -f .
-      #      kubectl get pods,deploy,svc -o wide --show-labels
-
       - persist_to_workspace:
           root: ~/
           paths:
@@ -126,7 +117,7 @@ jobs:
       - run:
           name: Deploy Docker Application
           command: |
-            aws eks --region eu-west-2 update-kubeconfig --name capstone-cluster
+            aws eks --region eu-west-2 update-kubeconfig --name devopscapstone
             cd kubernetes/
             ls -al
             kubectl get svc
@@ -136,7 +127,7 @@ jobs:
       # Here's where you will add some code to rollback on failure      
       - destroy-cluster
 
-  deploy-update-v2:
+  deploy-app-v2:
     docker: 
     - image: << pipeline.parameters.amazon_image >>
     steps:
@@ -155,7 +146,7 @@ jobs:
       - run:
           name: Deploy Docker Application v2
           command: |
-            aws eks --region eu-west-2 update-kubeconfig --name capstone-cluster
+            aws eks --region eu-west-2 update-kubeconfig --name devopscapstone
             cd kubernetes/
             ls -al
             kubectl set image deployment/techtrends aalatishe86/apptrends:v2
@@ -163,7 +154,8 @@ jobs:
             kubectl get pods,rs,deploy,svc -o wide --show-labels      
 
 workflows:
-  default:
+  version: 2
+  Capstone:
     jobs:
       - lint-application
       - build-docker-image:
@@ -173,20 +165,24 @@ workflows:
           filters:
             tags:
               only: /^b.*/
+            branches:
+              ignore: /.*/
       - deploy-app-v1:
           requires: [deploy-cluster]
           filters:
             tags:
               only: /^b.*/
-      - deploy-update-v2:
+            branches:
+              ignore: /.*/
+      #- smoke-test:
+      #    requires: [deploy-app-v1]
+      - deploy-app-v2:
           requires: [build-docker-image]
           filters:
             tags:
               only: /^v.*/
             branches:
               ignore: /.*/
-      #- smoke-test:
-      #    requires: [deploy-application]
       #- cloudfront-update:
       #    requires: [smoke-test]
       #- cleanup:
