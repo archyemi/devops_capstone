@@ -175,7 +175,7 @@ workflows:
               only: /^b.*/
             branches:
               ignore: /.*/
-      - deploy-app:
+      - deploy-app-v1:
           requires: [deploy-cluster]
           filters:
             tags:
