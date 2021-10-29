@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: techtrends
-        image: aalatishe86/apptrends:v2
+        image: aalatishe86/apptrends:v1
         resources:
           requests:
             memory: "64Mi"

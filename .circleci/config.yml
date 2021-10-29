@@ -149,7 +149,7 @@ jobs:
             aws eks --region eu-west-2 update-kubeconfig --name devopscapstone
             cd kubernetes/
             ls -al
-            kubectl set image deployment/techtrends aalatishe86/apptrends:v2
+            kubectl set image deployment.apps/techtrends techtrends=aalatishe86/apptrends:v1
             kubectl rollout status deployment/techtrends
             kubectl get pods,rs,deploy,svc -o wide --show-labels      
 
