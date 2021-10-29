@@ -155,7 +155,7 @@ jobs:
 
 workflows:
   version: 2
-  Capstone:
+  updates:
     jobs:
       - lint-application
       - build-docker-image:
