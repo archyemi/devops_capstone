@@ -1,0 +1,5 @@
+GITHUB
+https://github.com/archyemi/devops_capstone
+
+LoadBalancer
+a8e75565176ac448482924ef50dca2b1-990040126.eu-west-2.elb.amazonaws.com

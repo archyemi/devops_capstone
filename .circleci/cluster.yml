@@ -5,7 +5,7 @@ kind: ClusterConfig
 metadata:
   name: devopscapstone
   region: eu-west-2
-  version: "1.19"
+  version: "1.21"
 
 managedNodeGroups:
 - name: nodegroup

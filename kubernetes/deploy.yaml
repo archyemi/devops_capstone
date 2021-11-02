@@ -51,4 +51,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3111
-#      nodePort: 30007
